@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Voz → Libras | Tradutor Libras ↔ Voz</title>
+    <link rel="stylesheet" href="/src/comum/estilos.css">
+    <link rel="stylesheet" href="./estilos.css">
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <main>
+      <a class="voltar" href="%BASE_URL%">Voltar ao início</a>
+      <p class="etapa">Demonstração acadêmica</p>
+      <h1>Voz → Libras</h1>
+      <section class="painel" aria-labelledby="entrada">
+        <h2 id="entrada">Fale ou digite uma frase</h2>
+        <button id="falar" type="button" aria-pressed="false">Falar</button>
+        <p id="status" role="status">Toque em Falar e diga uma frase curta.</p>
+        <form id="formulario">
+          <label for="frase">Frase em português</label>
+          <input id="frase" name="frase" type="text" placeholder="Bom dia" required>
+          <button type="submit">Enviar frase</button>
+        </form>
+        <h3>Frases prontas</h3>
+        <div class="frases">
+          <button type="button" data-frase="oi">oi</button>
+          <button type="button" data-frase="bom dia">bom dia</button>
+          <button type="button" data-frase="boa tarde">boa tarde</button>
+          <button type="button" data-frase="boa noite">boa noite</button>
+          <button type="button" data-frase="tudo bem">tudo bem</button>
+          <button type="button" data-frase="obrigado">obrigado</button>
+          <button type="button" data-frase="por favor">por favor</button>
+          <button type="button" data-frase="tchau">tchau</button>
+          <button type="button" data-frase="sim">sim</button>
+          <button type="button" data-frase="não">não</button>
+        </div>
+      </section>
+      <section class="painel" aria-labelledby="resultado">
+        <h2 id="resultado">Texto reconhecido</h2>
+        <h3>Parcial</h3>
+        <p id="parcial"></p>
+        <h3>Final</h3>
+        <p id="final" aria-live="polite"></p>
+      </section>
+    </main>
+  </body>
+</html>
