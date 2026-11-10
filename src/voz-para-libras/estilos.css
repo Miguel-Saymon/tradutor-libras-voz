@@ -17,3 +17,10 @@ input { width: 100%; min-width: 0; }
 #parcial { color: #666; }
 #final { color: #000; }
 #parcial, #final { min-height: 1.5em; overflow-wrap: anywhere; }
+
+#video-sinal video {
+  display: block;
+  width: 100%;
+  max-width: 36rem;
+  margin-block: .5rem;
+}
