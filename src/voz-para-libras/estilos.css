@@ -24,3 +24,11 @@ input { width: 100%; min-width: 0; }
   max-width: 36rem;
   margin-block: .5rem;
 }
+
+#avatar-vlibras iframe {
+  display: block;
+  width: 100%;
+  max-width: 36rem;
+  aspect-ratio: 4 / 3;
+  border: 0;
+}

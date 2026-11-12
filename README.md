@@ -83,7 +83,7 @@ Os testes cobrem normalização e fluxo da interface com reconhecimento e elemen
 
 ## Publicar no GitHub Pages
 
-Antes de publicar os sinais, adicione as gravações a `public/sinais/` e inclua os MP4 no mesmo commit do projeto. O Vite copia essa pasta para `dist/sinais/`.
+O build copia o player oficial em `public/vlibras/` e os dez MP4 de reserva em `public/sinais/` para o site.
 
 1. Crie um repositório público no GitHub. Envie o conteúdo desta pasta para a raiz da branch `main`, incluindo o workflow em `.github/workflows/` e o `package-lock.json`.
 2. Em **Settings → Pages → Build and deployment → Source**, selecione **GitHub Actions**.
@@ -112,31 +112,18 @@ Remove-Item Env:VITE_BASE_PATH
 
 Use o painel **Network** do DevTools para medir requisições, bytes transferidos e tempo de carregamento do build, com cache desabilitado e perfil móvel. O **Lighthouse** ajuda a registrar a linha de base de desempenho e acessibilidade. A interface usa fontes do sistema e arquivos locais. Em uma apresentação sem internet, sirva o build localmente com `npm run preview` depois de instalar e compilar o projeto.
 
-## Etapa 3 — sinalização por vídeos locais
+## Etapa 3 — avatar oficial do VLibras
 
-A tela Voz → Libras utiliza o caminho B. O widget VLibras está disponível para incorporação por script. O manual descreve a seleção de um elemento de texto e a entrada manual em **Menu → Tradutor**. A documentação de integração consultada não especifica uma chamada pública para entregar diretamente uma string ao avatar e acompanhar o fim da animação. [Integração oficial](https://www.vlibras.gov.br/doc/widget/installation/webpageintegration.html) · [Seleção de texto](https://www.vlibras.gov.br/doc/widget/functionalities/text-translation.html) · [Tradutor](https://www.vlibras.gov.br/doc/widget/functionalities/translator.html)
+Ao receber o texto final de voz, digitação ou atalho, a página carrega o player Unity do widget público em um iframe local. Cada frase aguarda a anterior. O programa espera o evento de prontidão do Unity antes de enviar a glosa, e o evento de fim da animação antes de liberar a próxima frase. O botão **Repetir** volta a sinalizar a última entrada.
 
-O repositório do widget indica LGPL-3.0 para o código. Os termos do serviço informam que o acesso é gratuito, sujeito a interrupções, e restringem o uso das traduções automáticas em atividades educacionais e produções audiovisuais. Os vídeos próprios permitem validar as dez frases antecipadamente e servir o sinal pelo mesmo endereço do aplicativo. Para apresentar sem internet, prepare o build no notebook e use a digitação ou os atalhos com o servidor local. [Licença do código](https://github.com/spbgovbr-vlibras/vlibras-web-browsers/blob/dev/LICENSE) · [Termos do serviço](https://www.vlibras.gov.br/privacy.html)
+O widget oferece uma interface de seleção de texto. Seu manual de incorporação documenta o carregamento e os parâmetros do widget. Para acionar o avatar por código, esta integração usa o protocolo do player na revisão **d79ca86ad09109e77887537aa96cd485c89037e1** do repositório oficial. O widget faz POST de JSON com o campo `text` ao tradutor e passa a glosa ao método `playNow` do objeto `PlayerManager`. É um protocolo de implementação vinculado a essa revisão. [Manual do widget](https://www.vlibras.gov.br/doc/widget/installation/webpageintegration.html) · [Tradução de texto](https://github.com/spbgovbr-vlibras/vlibras-web-browsers/blob/d79ca86ad09109e77887537aa96cd485c89037e1/src/core/actions/index.ts) · [Ações do player](https://github.com/spbgovbr-vlibras/vlibras-web-browsers/blob/d79ca86ad09109e77887537aa96cd485c89037e1/src/player/actions/index.ts)
 
-`src/voz-para-libras/frases.json` associa cada expressão normalizada a um MP4. `avatar.js` ouve o evento de texto final das três entradas. Expressões inteiras podem ser enfileiradas, inclusive em uma única entrada como “bom dia, tudo bem?”. O player inicia o próximo vídeo quando o anterior termina. **Repetir** reproduz a última entrada concluída. Uma entrada com trecho desconhecido recebe o aviso “sinal ainda não disponível”. Uma gravação ausente ou ilegível é identificada pelo nome do arquivo.
+O repositório separado **spbgovbr-vlibras/vlibras-player-webjs** implementa `Player.translate(text)` e `Player.play(glosa)`. A versão 2.4.2 no npm declara outro URL de repositório e outra estrutura de código. Usamos o runtime do widget para manter o conjunto de scripts, manifesto e binários da mesma revisão oficial. Para a Etapa 4, uma glosa válida do dicionário pode ser enviada diretamente ao mesmo comando de reprodução. [Player WebJS](https://github.com/spbgovbr-vlibras/vlibras-player-webjs/blob/dev/src/Player.js) · [Metadados do npm](https://registry.npmjs.org/vlibras-player-webjs/2.4.2)
 
-### Gravar os sinais
+**Recursos locais.** O player usa o caminho do repositório fornecido por `import.meta.env.BASE_URL`. A pasta `public/vlibras/` ocupa aproximadamente **20,31 MB**. O maior arquivo mede **16.992.528 bytes**. O iframe adapta a ponte oficial para restringir mensagens à origem e à janela do aplicativo, fixa a versão do manifesto e comunica falha de WebGL à tela. O arquivo de licença acompanha a distribuição. [Fontes do Unity](https://github.com/spbgovbr-vlibras/vlibras-web-browsers/tree/d79ca86ad09109e77887537aa96cd485c89037e1/public/unity)
 
-1. Comece por **bom dia** e **tudo bem?**. Combine a variante com uma pessoa fluente em Libras e peça autorização de quem aparecerá nos vídeos para uso no demo e publicação no GitHub Pages.
-2. Fixe a câmera de frente e enquadre da cintura até acima da cabeça. Deixe espaço lateral para que as duas mãos, os cotovelos e o rosto permaneçam visíveis durante o sinal. Use fundo neutro, boa iluminação frontal e roupa que contraste com as mãos.
-3. Grave uma expressão inteira por clipe, em ritmo natural. Mire em 2 a 4 segundos, com uma breve pausa no início e no fim. Preserve os movimentos e a expressão facial da pessoa, inclusive na pergunta “tudo bem?”. Confira o vídeo antes de cortar.
-4. Exporte como MP4 com vídeo H.264. O áudio é dispensável. Use os nomes abaixo, em minúsculas, sem acentos e com hífen entre as palavras. Copie os arquivos para `public/sinais/`.
+**Duas frases para o demo.** Para “bom dia” e “tudo bem?”, incluímos as respostas do tradutor oficial consultadas em 12/11/2026 (`BOM DIA` e `TUDO_BEM [INTERROGAÇÃO]`) e os respectivos bundles do dicionário WebGL BR. Essas duas animações funcionam com o aplicativo servido localmente. A transcrição pelo microfone pode precisar de internet. Para outros textos, o navegador envia o texto final ao tradutor VLibras de produção e o avatar consulta o dicionário remoto. A cobertura e a qualidade dependem dos sinais disponíveis. [Configuração de produção do VLibras](https://github.com/spbgovbr-vlibras/vlibras-web-browsers/blob/d79ca86ad09109e77887537aa96cd485c89037e1/src/core/config/index.ts)
 
-| Frase | Arquivo | Frase | Arquivo |
-|---|---|---|---|
-| oi | oi.mp4 | obrigado | obrigado.mp4 |
-| bom dia | bom-dia.mp4 | por favor | por-favor.mp4 |
-| boa tarde | boa-tarde.mp4 | tchau | tchau.mp4 |
-| boa noite | boa-noite.mp4 | sim | sim.mp4 |
-| tudo bem? | tudo-bem.mp4 | não | nao.mp4 |
+**Plano B.** Se o carregamento, a tradução ou a animação falhar ou expirar, a tela avisa que entrou no modo de reserva. A frase atual, as pendentes e as seguintes usam os vídeos existentes de `public/sinais/`, conforme `frases.json`. Recarregue a página para tentar o avatar novamente. O código do componente é LGPL-3.0. Os termos do serviço VLibras restringem a aplicação das traduções automáticas em atividades educacionais. Confirme a adequação da apresentação acadêmica com os responsáveis pelo VLibras. [Licença do componente](https://github.com/spbgovbr-vlibras/vlibras-web-browsers/blob/d79ca86ad09109e77887537aa96cd485c89037e1/LICENSE) · [Termos do serviço](https://www.vlibras.gov.br/privacy.html)
 
-### Validar as dez tentativas
-
-Rode `npm ci`, `npm test` e `npm run dev`. Abra **Voz → Libras** e confira as duas gravações com alguém fluente em Libras. Em cada rodada, diga “bom dia”, espere o sinal terminar, diga “tudo bem?” e espere novamente. Anote o texto final, o sinal exibido e se a reprodução chegou ao fim para cada frase. Repita dez rodadas. O aceite exige **10/10 para cada frase**, com o sinal correto e completo. Se o texto final divergir, teste a mesma frase pelo atalho para verificar o vídeo separadamente da transcrição.
-
-O projeto foi preparado sem gravações próprias. Os testes do player exercitam a seleção e a fila com eventos de mídia simulados. O aceite linguístico depende dos MP4 reais e da revisão de uma pessoa fluente. A próxima etapa é a conversão para glosa por regras, que também precisa de validação antes da apresentação.
+**Teste de aceite.** Abra Voz → Libras pelo HTTPS publicado. Clique em **bom dia** e **tudo bem?** e aguarde o fim de cada animação. Repita pelo microfone no notebook e no celular. Confira o texto final, o mesmo avatar Ícaro e a animação completa sem aviso de reserva. Para o critério linguístico, peça a uma pessoa fluente em Libras que valide dez rodadas de cada frase.

@@ -16,9 +16,8 @@ beforeEach(async () => {
     querySelector: (seletor) => elementos[seletor],
     createElement: () => ({ setAttribute: vi.fn(), play: vi.fn().mockResolvedValue(), pause: vi.fn() }),
   })
-  const { emitir, EVENTOS } = await import('../comum/contrato.js')
-  enviar = (texto) => emitir(EVENTOS.TEXTO_RECONHECIDO, { texto })
-  await import('./avatar.js')
+  const { criarPlanoB } = await import('./videos.js')
+  enviar = criarPlanoB()
 })
 
 afterEach(() => vi.unstubAllGlobals())
