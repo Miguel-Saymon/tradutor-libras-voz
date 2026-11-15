@@ -5,59 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Voz → Libras | Tradutor Libras ↔ Voz</title>
     <link rel="stylesheet" href="/src/comum/estilos.css">
+    <link rel="stylesheet" href="/src/comum/layout-traducao.css">
     <link rel="stylesheet" href="./estilos.css">
     <script type="module" src="./main.js"></script>
     <script type="module" src="./avatar.js"></script>
   </head>
   <body>
-    <main>
-      <a class="voltar" href="%BASE_URL%">Voltar ao início</a>
-      <p class="etapa">Demonstração acadêmica</p>
-      <h1>Voz → Libras</h1>
-      <section class="painel" aria-labelledby="entrada">
-        <h2 id="entrada">Fale ou digite uma frase</h2>
-        <button id="falar" type="button" aria-pressed="false">Falar</button>
-        <p id="status" role="status">Toque em Falar e diga uma frase curta.</p>
-        <form id="formulario">
-          <label for="frase">Frase em português</label>
-          <input id="frase" name="frase" type="text" placeholder="Bom dia" required>
-          <button type="submit">Enviar frase</button>
-        </form>
-        <h3>Frases prontas</h3>
-        <div class="frases">
-          <button type="button" data-frase="oi">oi</button>
-          <button type="button" data-frase="bom dia">bom dia</button>
-          <button type="button" data-frase="boa tarde">boa tarde</button>
-          <button type="button" data-frase="boa noite">boa noite</button>
-          <button type="button" data-frase="tudo bem?">tudo bem?</button>
-          <button type="button" data-frase="obrigado">obrigado</button>
-          <button type="button" data-frase="por favor">por favor</button>
-          <button type="button" data-frase="tchau">tchau</button>
-          <button type="button" data-frase="sim">sim</button>
-          <button type="button" data-frase="não">não</button>
+    <main class="pagina-traducao">
+      <header class="cabecalho-traducao">
+        <div class="barra-topo">
+          <a class="voltar" href="%BASE_URL%">Voltar ao início</a>
+          <p class="etapa">Demonstração acadêmica</p>
         </div>
-      </section>
-      <div class="camadas">
-      <section class="painel" aria-labelledby="resultado">
-        <h2 id="resultado">Texto reconhecido</h2>
-        <h3>Parcial</h3>
-        <p id="parcial"></p>
-        <h3>Final</h3>
-        <p id="final" aria-live="polite"></p>
-      </section>
-      <section class="painel" aria-labelledby="titulo-glosa">
-        <h2 id="titulo-glosa">Glosa</h2>
-        <p id="glosa" aria-live="polite"></p>
-        <p>Regras didáticas. A glosa não representa expressão facial nem uso do espaço.</p>
-      </section>
-      <section class="painel" aria-labelledby="titulo-sinal">
-        <h2 id="titulo-sinal">Sinal em Libras</h2>
-        <div id="avatar-vlibras"></div>
-        <p id="aviso-avatar" role="status"></p>
-        <p id="legenda-sinal" role="status"></p>
-        <div id="video-sinal"></div>
-        <button id="repetir-sinal" type="button" disabled>Repetir</button>
-      </section>
+        <h1>Voz → Libras</h1>
+      </header>
+      <div class="layout-traducao">
+        <section class="painel bloco-com-rolagem bloco-entrada" aria-labelledby="entrada">
+          <h2 id="entrada">Fale ou digite uma frase</h2>
+          <div class="area-rolavel" tabindex="0" role="region" aria-label="Entrada, texto reconhecido e glosa">
+            <button id="falar" type="button" aria-pressed="false">Falar</button>
+            <p id="status" role="status">Toque em Falar e diga uma frase curta.</p>
+            <form id="formulario">
+              <label for="frase">Frase em português</label>
+              <input id="frase" name="frase" type="text" placeholder="Bom dia" required>
+              <button type="submit">Enviar frase</button>
+            </form>
+            <div class="camadas">
+              <section aria-labelledby="resultado">
+                <h3 id="resultado">Texto reconhecido</h3>
+                <p class="rotulo-texto">Parcial</p>
+                <p id="parcial"></p>
+                <p class="rotulo-texto">Final</p>
+                <p id="final" aria-live="polite"></p>
+              </section>
+              <section aria-labelledby="titulo-glosa">
+                <h3 id="titulo-glosa">Glosa</h3>
+                <p id="glosa" aria-live="polite"></p>
+                <p class="nota-glosa">Regras didáticas. A glosa não representa expressão facial nem uso do espaço.</p>
+              </section>
+            </div>
+            <h3>Frases prontas</h3>
+            <div class="frases">
+              <button type="button" data-frase="oi">oi</button>
+              <button type="button" data-frase="bom dia">bom dia</button>
+              <button type="button" data-frase="boa tarde">boa tarde</button>
+              <button type="button" data-frase="boa noite">boa noite</button>
+              <button type="button" data-frase="tudo bem?">tudo bem?</button>
+              <button type="button" data-frase="obrigado">obrigado</button>
+              <button type="button" data-frase="por favor">por favor</button>
+              <button type="button" data-frase="tchau">tchau</button>
+              <button type="button" data-frase="sim">sim</button>
+              <button type="button" data-frase="não">não</button>
+            </div>
+          </div>
+        </section>
+        <section class="painel bloco-fixo bloco-avatar" aria-labelledby="titulo-sinal">
+          <h2 id="titulo-sinal">Avatar sinalizando</h2>
+          <div id="avatar-vlibras"></div>
+          <p id="aviso-avatar" role="status"></p>
+          <p id="legenda-sinal" role="status"></p>
+          <div id="video-sinal"></div>
+          <button id="repetir-sinal" type="button" aria-label="Repetir sinal" disabled>Repetir</button>
+        </section>
       </div>
     </main>
   </body>

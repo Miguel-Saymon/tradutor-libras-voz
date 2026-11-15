@@ -1,0 +1,38 @@
+/* Estrutura exclusiva das duas telas de tradução; a página inicial não muda. */
+.pagina-traducao { max-width: 80rem; padding: 1rem 1.5rem; }
+.cabecalho-traducao { margin-bottom: 1rem; }
+.barra-topo { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.barra-topo .etapa { margin: 0; font-size: .75rem; text-align: right; }
+.cabecalho-traducao h1 { margin: .25rem 0 0; font-size: clamp(2rem, 4vw, 2.5rem); }
+.layout-traducao { display: grid; gap: 1.25rem; align-items: start; }
+.layout-traducao > .painel { min-width: 0; margin: 0; padding: 1rem; }
+.layout-traducao h2 { font-size: 1.25rem; line-height: 1.3; margin: 0 0 .75rem; }
+.layout-traducao h3 { font-size: 1rem; margin: .75rem 0 .5rem; }
+.layout-traducao p { margin: .5rem 0; overflow-wrap: anywhere; }
+.layout-traducao button, .layout-traducao input, .layout-traducao select {
+  font: inherit; min-height: 44px; max-width: 100%; padding: .5rem .75rem;
+  border: 1px solid #526e67; border-radius: .5rem;
+}
+.layout-traducao button { color: #123e36; background: #e7f2ed; cursor: pointer; }
+.layout-traducao button:disabled { color: #52645e; background: #f2f4f3; border-color: #b5c4be; cursor: default; }
+.layout-traducao input, .layout-traducao select { color: #142a2b; background: #fff; }
+.layout-traducao :is(button, input, select, summary, [tabindex]):focus-visible {
+  outline: 3px solid #853719; outline-offset: 3px;
+}
+.layout-traducao label { display: block; font-weight: 600; }
+.ajuda { border-top: 1px solid #cfddd7; margin-top: .75rem; padding-top: .25rem; }
+.ajuda summary { min-height: 44px; padding-block: .6rem; cursor: pointer; color: #224e44; font-weight: 600; }
+.ajuda p { font-size: .9rem; }
+.area-rolavel { min-width: 0; min-height: 0; }
+@media (min-width: 48rem) {
+  .layout-traducao { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+  .bloco-fixo { position: sticky; top: 1rem; }
+  .bloco-com-rolagem { max-height: calc(100dvh - 9rem); display: flex; flex-direction: column; }
+  .area-rolavel { overflow: auto; padding: .25rem .4rem .25rem .25rem; overscroll-behavior: contain; scrollbar-gutter: stable; }
+}
+@media (max-width: 47.999rem) {
+  .pagina-traducao { padding: .75rem 1rem 1.5rem; }
+  .barra-topo { align-items: start; }
+  .barra-topo .etapa { max-width: 13rem; font-size: .65rem; }
+  .layout-traducao { gap: 1rem; }
+}

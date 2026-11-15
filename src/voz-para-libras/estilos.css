@@ -1,45 +1,24 @@
-button, input {
-  font: inherit;
-  min-height: 44px;
-  padding: .5rem .75rem;
-}
-
-button { cursor: pointer; }
-button:disabled { cursor: default; }
-button:focus-visible, input:focus-visible {
-  outline: 3px solid #853719;
-  outline-offset: 3px;
-}
-
-form { display: grid; gap: .5rem; }
+form { display: grid; gap: .5rem; margin-top: .75rem; }
 input { width: 100%; min-width: 0; }
 .frases { display: flex; flex-wrap: wrap; gap: .5rem; }
 #parcial { color: #666; }
-#final { color: #000; }
-#parcial, #final { min-height: 1.5em; overflow-wrap: anywhere; }
-
-#video-sinal video {
-  display: block;
-  width: 100%;
-  max-width: 36rem;
-  margin-block: .5rem;
-}
-
-#avatar-vlibras iframe {
-  display: block;
-  width: 100%;
-  max-width: 36rem;
-  aspect-ratio: 4 / 3;
-  border: 0;
-}
-
-.camadas {
-  display: grid;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-.camadas > .painel { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+#final { color: #000; font-weight: 600; }
+#parcial, #final, #glosa { min-height: 1.5em; overflow-wrap: anywhere; }
+.camadas { display: grid; gap: .75rem; margin-top: .75rem; }
+.camadas > section { min-width: 0; padding: .75rem; border: 1px solid #cfddd7; border-radius: .5rem; background: #f6faf8; }
+.camadas h3 { margin-top: 0; }
+.camadas .rotulo-texto { font-size: .8rem; margin-bottom: 0; }
+.camadas #parcial, .camadas #final { margin-top: 0; }
 #glosa { font-weight: 700; }
+.nota-glosa { font-size: .85rem; }
+#avatar-vlibras { background: #f6faf8; border-radius: .5rem; }
+#avatar-vlibras:empty { aspect-ratio: 4 / 3; display: grid; place-items: center; border: 1px dashed #a1beb5; }
+#avatar-vlibras:empty::before { content: 'Envie uma frase para iniciar o avatar.'; padding: 1rem; text-align: center; color: #315752; }
+#avatar-vlibras iframe { display: block; width: 100%; aspect-ratio: 4 / 3; border: 0; border-radius: .5rem; }
+#video-sinal video { display: block; width: 100%; height: auto; object-fit: contain; margin-block: .5rem; }
 @media (min-width: 48rem) {
-  .camadas { grid-template-columns: 1fr 1fr 1.5fr; }
+  form { grid-template-columns: minmax(0, 1fr) auto; }
+  form label { grid-column: 1 / -1; }
+  .camadas { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  #video-sinal video { max-height: calc(100dvh - 19rem); }
 }

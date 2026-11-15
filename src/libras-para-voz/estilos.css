@@ -1,19 +1,24 @@
 .controles-camera { display: flex; flex-wrap: wrap; gap: .75rem; }
-#modo-gestos { margin-bottom: 1rem; }
-button { min-height: 44px; padding: .6rem 1rem; font: inherit; cursor: pointer; }
-button:disabled { cursor: default; }
-button:focus-visible { outline: 3px solid #853719; outline-offset: 3px; }
-.enquadramento { position: relative; margin-top: 1rem; background: #142a2b; }
-/* Mesma geometria e mesmo espelhamento: sem recorte nem inversão dupla. */
-.enquadramento video { display: block; width: 100%; height: auto; min-height: 160px; }
+.enquadramento { position: relative; background: #142a2b; border-radius: .5rem; overflow: hidden; }
+/* Ambos contêm a imagem na mesma caixa, inclusive com faixas laterais.
+   O canvas usa a proporção intrínseca atualizada pelo rastreador existente. */
+.enquadramento video { display: block; width: 100%; height: auto; aspect-ratio: auto 4 / 3; }
 .enquadramento canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.enquadramento video, .enquadramento canvas { transform: scaleX(-1); }
-.metricas { display: flex; flex-wrap: wrap; gap: 1.5rem; font-variant-numeric: tabular-nums; }
-label { display: block; margin-top: 1rem; }
-input, select { max-width: 100%; min-height: 44px; padding: .5rem; font: inherit; }
+.enquadramento video, .enquadramento canvas { object-fit: contain; transform: scaleX(-1); }
+.metricas { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; font-variant-numeric: tabular-nums; }
+.bloco-camera .ajuda { margin-top: .25rem; }
+.resultado-gesto { padding: .75rem 1rem; border-radius: .5rem; background: #e7f2ed; border: 1px solid #a1beb5; }
+#gesto-previsto { font-size: clamp(1.2rem, 2vw, 1.6rem); font-weight: 700; line-height: 1.25; margin: 0; }
+.resumo-gesto { display: flex; flex-wrap: wrap; gap: .25rem 1rem; font-variant-numeric: tabular-nums; }
+.bloco-gestos > label { margin-top: .75rem; }
+#modo-gestos { margin: .25rem 0 .5rem; flex-shrink: 0; }
+.bloco-gestos label { margin-top: .5rem; }
 select { width: 100%; }
+input[type="file"] { width: 100%; }
 input[type="number"] { width: 7rem; }
-input:focus-visible, select:focus-visible { outline: 3px solid #853719; outline-offset: 3px; }
-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+table { width: 100%; border-collapse: collapse; margin-top: .75rem; }
 caption { text-align: left; font-weight: bold; }
-th, td { text-align: left; padding: .5rem; border-bottom: 1px solid #a1beb5; overflow-wrap: anywhere; }
+th, td { text-align: left; padding: .35rem; border-bottom: 1px solid #a1beb5; overflow-wrap: anywhere; }
+@media (min-width: 48rem) {
+  .enquadramento video { max-height: clamp(12rem, calc(100dvh - 28rem), 26rem); }
+}
