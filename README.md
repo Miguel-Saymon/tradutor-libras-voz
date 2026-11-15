@@ -1,6 +1,6 @@
 # Tradutor Libras ↔ Voz
 
-Protótipo acadêmico. Voz → Libras reúne captura, glosa didática e avatar. Libras → Voz está na primeira parte da Etapa 5: câmera e pontos das mãos, ainda sem classificar gestos nem produzir fala.
+Protótipo acadêmico. Voz → Libras reúne captura, glosa didática e avatar. Libras → Voz está na segunda parte da Etapa 5: câmera, coleta de exemplos e classificação de formas estáticas com KNN, ainda sem produzir fala automaticamente.
 
 ## Estrutura
 
@@ -16,11 +16,16 @@ src/
   libras-para-voz/camera.js     Captura local e liberação da câmera
   libras-para-voz/maos.js       MediaPipe, inferência e desenho dos pontos
   libras-para-voz/main.js       Controles e estado da sessão
+  libras-para-voz/normalizacao.js  Vetor 3D relativo ao pulso e tamanho da mão
+  libras-para-voz/coleta.js     Coleta, importação/exportação e interface de teste
+  libras-para-voz/knn.js        Classificação por vizinhos em JavaScript puro
   comum/estilos.css            Layout, contraste e foco compartilhados
   comum/contrato.js            Síntese de voz e barramento de eventos
   comum/contrato.test.js       Testes unitários com Vitest
 public/sinais/                 Vídeos MP4 de reserva
 public/mediapipe/              Modelo de mãos e runtime WASM locais
+public/gestos-config.json      Gestos, instruções, palavras e mão selecionada
+public/gestos.json             Base de vetores (inicialmente vazia)
 scripts/preparar-maos.mjs      Baixa o modelo e copia o WASM do pacote instalado
 vite.config.js                 Entradas HTML e caminho base de publicação
 .github/workflows/deploy.yml   Build e publicação no GitHub Pages
@@ -196,3 +201,55 @@ Roteiro de aceite no notebook e no celular:
 **Validação automatizada:** `npm test` cobre os fluxos existentes e a câmera, incluindo permissão tardia, falha de reprodução e encerramento do dispositivo. O teste de navegador usa o modelo real com uma imagem oficial de duas mãos convertida em fluxo de vídeo, além de uma câmera de teste do Chromium. Isso verifica integração, desenho e caminhos locais; o aceite de movimento e desempenho em hardware físico continua sendo feito pelo roteiro acima.
 
 **Limite de performance:** `detectForVideo` é síncrono. Nesta base, inferência e desenho ficam na thread principal, evitando transferência de quadros e complexidade de Worker antes de medir nos aparelhos. A captura limitada e o descarte de quadros repetidos reduzem trabalho. Se o painel Performance mostrar travamentos nos dispositivos-alvo, o próximo ajuste é levar a inferência para um Web Worker e manter apenas o desenho no `requestAnimationFrame` da tela. Esta entrega ainda não reconhece sinais de Libras. A próxima parte é coletar exemplos e implementar normalização/KNN; valide os gestos com uma pessoa que saiba Libras.
+
+## Etapa 5 — parte 2: coleta e KNN
+
+A tela **Libras → Voz** tem os modos **Coletar** e **Testar**, compartilhando a câmera e o rastreador da parte 1. `camera.js` foi preservado. `maos.js` ganhou somente o callback `aoResultado`, chamado depois de desenhar cada resultado. O código novo está em `normalizacao.js`, `coleta.js` e `knn.js`; nenhuma dependência foi adicionada.
+
+### Vetor e escolha da mão
+
+`normalizarMao(pontos)` recebe os 21 pontos **worldLandmarks** do MediaPipe, com coordenadas 3D na mesma unidade (metros). Para cada ponto, subtrai o pulso (índice 0) e divide pela distância euclidiana 3D entre o pulso e a base do dedo médio (índice 9). A saída tem 63 números na ordem `[x0, y0, z0, x1, y1, z1, ..., x20, y20, z20]`. O pulso vira zero e a distância 0–9 vira 1. Pontos ausentes, inválidos ou escala quase zero retornam `null`. [Coordenadas e índices oficiais do MediaPipe](https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker?tab=Web)
+
+A normalização remove translação e escala uniforme; não remove rotação nem transforma uma mão esquerda em direita. Usamos `worldLandmarks`, em vez de misturar x e y normalizados por dimensões diferentes da imagem. O espelhamento CSS afeta só a exibição. `vetorDaMao` escolhe a mão por `handedness`, independentemente da ordem retornada pelo detector. Com duas mãos, apenas a configurada entra no vetor: **Right (direita)** por padrão. Se só a outra mão estiver presente, não há coleta nem previsão. Para usar a esquerda, altere `mao` para `Left` em `public/gestos-config.json` e faça uma base nova com essa mão. Arquivos de mãos ou normalizações diferentes não são misturados.
+
+### Gravar e salvar
+
+1. Abra a tela por HTTPS ou localhost e inicie a câmera. Selecione **Coletar**.
+2. Escolha o gesto e faça a forma indicada com a mão direita. Clique em **Gravar exemplo**: cada clique salva um vetor do quadro atual, sem imagens nem vídeo.
+3. Faça **30 a 50 exemplos por gesto**, equilibrando as quantidades. Varie distância, ângulo e iluminação, e inclua mais de uma pessoa. Mude a pose entre cliques; repetir muitas vezes o mesmo quadro não cria diversidade.
+4. Clique em **Exportar gestos.json** e guarde o download. A coleta fica em memória e se perde ao recarregar ou fechar sem exportar.
+5. **Importar gestos.json** substitui a base em memória após validar todo o arquivo. Um arquivo inválido deixa os exemplos anteriores intactos. A configuração e os vetores são reconstruídos com campos permitidos; campos extras, inclusive imagens, são descartados. O limite é de 5.000 exemplos e 8 MB por importação.
+6. Para carregar automaticamente, copie o download para **public/gestos.json**. No GitHub Pages, envie esse arquivo ao repositório e publique novamente. Importar pelo navegador não altera os arquivos do projeto nem o site publicado.
+
+A base entregue está vazia de propósito: não há exemplos humanos coletados ainda. Tanto `gestos.json` quanto `gestos-config.json` são buscados com `import.meta.env.BASE_URL`, sem CDN. O arquivo de exemplos contém `versao: 1`, `normalizacao: "pulso-medio-world-xyz-v1"`, `mao: "Right"` e `exemplos`, uma lista de objetos `{ gesto, vetor }`. Preserve esses metadados ao exportar/importar.
+
+Os três gestos iniciais confirmados são associações para testar o classificador:
+
+| ID | Forma | Palavra associada |
+| --- | --- | --- |
+| mao-aberta | Palma com os cinco dedos estendidos | aberta |
+| punho-fechado | Dedos fechados em punho | fechado |
+| indicador-cima | Somente o indicador estendido para cima | apontando |
+
+Essas associações não são traduções validadas de Libras. `public/gestos-config.json` define `id`, `nome`, `palavra` e `instrucao` de cada gesto. Alterar `palavra` troca a associação sem mexer em JavaScript. Nesta parte ela é mostrada na tela; suavização temporal e fala automática ficam para a próxima parte.
+
+### Testar e medir a precisão
+
+Depois da coleta, selecione **Testar**. O KNN usa distância euclidiana nos 63 valores e votos dos k exemplos mais próximos. O padrão é `k = 3`; a tela aceita inteiros de 1 a 99. Se k exceder a base, o k efetivo é a quantidade disponível. Para habilitar a previsão, grave pelo menos um exemplo de cada gesto configurado. Recomenda-se completar os 30–50 antes de avaliar.
+
+A tela mostra gesto, palavra e **confiança = votos do vencedor / k efetivo**. Isso não é uma probabilidade calibrada: com k=1 sempre será 100%, mesmo se o gesto estiver errado. Empates usam a menor soma de distâncias e, persistindo o empate, o ID em ordem alfabética. O KNN é de vocabulário fechado e não rejeita formas desconhecidas. Ausência da mão configurada, câmera parada ou pontos antigos limpam a previsão. Esta versão mostra a previsão de cada quadro, ainda sem estabilização temporal.
+
+Para uma avaliação simples, separe a coleta da avaliação: use poses novas, preferencialmente outra sessão e uma pessoa que não participou da coleta. Faça **10 tentativas independentes por gesto**, retirando a mão e refazendo a pose entre elas. Em cada tentativa, anote a previsão uma vez após 2 segundos; se estiver ausente ou errada, conte como erro. Não grave essas tentativas na base e não escolha apenas os quadros que acertaram.
+
+| Gesto esperado | Tentativas | Acertos | Precisão |
+| --- | ---: | ---: | ---: |
+| Mão aberta | 10 | preencher | acertos ÷ 10 × 100% |
+| Punho fechado | 10 | preencher | acertos ÷ 10 × 100% |
+| Indicador para cima | 10 | preencher | acertos ÷ 10 × 100% |
+| Total | 30 | soma | soma ÷ 30 × 100% |
+
+Anote aparelho, navegador, k e quantidade de exemplos. Faça a tabela separadamente no notebook e no celular. Se ajustar a base ou k após ver os erros, repita com novas tentativas. A validação automatizada cobre normalização, votação, formato dos arquivos e integração com o modelo real usando entradas de câmera de teste; isso não mede precisão com pessoas nem substitui esse aceite nos aparelhos.
+
+### Adicionar um gesto
+
+Adicione um objeto com ID novo e único à lista `gestos` em `public/gestos-config.json`, com nome, palavra e instrução. Escolha uma forma estática bem distinta, mantendo a mesma mão. Recarregue, importe a base anterior se necessário, colete 30–50 exemplos do novo gesto e exporte a base completa. Copie para `public/gestos.json`, publique e repita a avaliação de todos os gestos. Ao remover ou renomear um ID, os exemplos com o ID antigo precisam ser removidos ou migrados no JSON antes da importação; mudar só o nome ou a palavra mantém os vetores válidos. Peça a uma pessoa que saiba Libras para validar os gestos antes de apresentá-los como sinais.

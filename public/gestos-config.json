@@ -1,0 +1,8 @@
+{
+  "mao": "Right",
+  "gestos": [
+    { "id": "mao-aberta", "nome": "Mão aberta", "palavra": "aberta", "instrucao": "Mostre a palma com os cinco dedos estendidos." },
+    { "id": "punho-fechado", "nome": "Punho fechado", "palavra": "fechado", "instrucao": "Feche os dedos formando um punho, voltado para a câmera." },
+    { "id": "indicador-cima", "nome": "Indicador para cima", "palavra": "apontando", "instrucao": "Estenda apenas o indicador para cima, mantendo os outros dedos dobrados." }
+  ]
+}

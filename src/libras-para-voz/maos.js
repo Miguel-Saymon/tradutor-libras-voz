@@ -1,7 +1,7 @@
 import { DrawingUtils, FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision'
 
 /** Carrega o modelo local; uma instância por sessão, liberada ao parar. */
-export async function criarRastreador(video, canvas, { aoMedir = () => {}, aoErro = () => {} } = {}) {
+export async function criarRastreador(video, canvas, { aoMedir = () => {}, aoErro = () => {}, aoResultado = () => {} } = {}) {
   const base = `${import.meta.env.BASE_URL}mediapipe/`
   const arquivos = await FilesetResolver.forVisionTasks(`${base}wasm`)
   const opcoes = {
@@ -59,6 +59,8 @@ export async function criarRastreador(video, canvas, { aoMedir = () => {}, aoErr
           desenho.drawLandmarks(pontos, { color: '#ffffff', fillColor: '#c02635', radius: 4, lineWidth: 1 })
         }
         totalMaos = resultado.landmarks.length
+        // Compartilha apenas pontos; câmera, inferência e desenho continuam aqui.
+        aoResultado(resultado)
         quadros += 1
       }
       // FPS de inferência, não a frequência de atualização da tela.

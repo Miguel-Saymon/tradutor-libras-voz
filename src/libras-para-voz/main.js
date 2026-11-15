@@ -1,4 +1,7 @@
 import { criarCamera } from './camera.js'
+import { criarColeta } from './coleta.js'
+
+const coleta = criarColeta()
 
 const video = document.querySelector('#camera')
 const canvas = document.querySelector('#pontos')
@@ -16,6 +19,7 @@ function encerrar(mensagem = 'Câmera parada.') {
   rastreador?.parar()
   rastreador = null
   camera.parar()
+  coleta.limpar()
   fps.textContent = '0'
   maos.textContent = '0'
   iniciar.disabled = false
@@ -44,6 +48,7 @@ iniciar.addEventListener('click', async () => {
     const { criarRastreador } = await import('./maos.js')
     if (atual !== sessao) return
     const novo = await criarRastreador(video, canvas, {
+      aoResultado: resultado => { if (atual === sessao) coleta.atualizar(resultado) },
       aoMedir: dados => {
         if (atual !== sessao) return
         fps.textContent = String(dados.fps)

@@ -13,11 +13,13 @@
   <body>
     <main>
       <a class="voltar" href="%BASE_URL%">Voltar ao início</a>
-      <p class="etapa">Demonstração acadêmica · Etapa 5 — parte 1</p>
+      <p class="etapa">Demonstração acadêmica · Etapa 5 — parte 2</p>
       <h1>Libras → Voz</h1>
-      <p>Rastreamento de até duas mãos. Esta parte mostra os pontos; o reconhecimento de gestos e a fala serão adicionados depois.</p>
+      <p>Colete exemplos de três formas de mão e teste o reconhecimento. As palavras são associações de demonstração, não traduções validadas de Libras. A fala automática fica para a próxima parte.</p>
       <section class="painel" aria-labelledby="titulo-camera">
         <h2 id="titulo-camera">Câmera e pontos das mãos</h2>
+        <label for="modo-gestos">Modo</label>
+        <select id="modo-gestos"><option value="coleta">Coletar</option><option value="teste">Testar</option></select>
         <div class="controles-camera">
           <button id="iniciar-camera" type="button">Iniciar câmera</button>
           <button id="parar-camera" type="button" disabled>Parar</button>
@@ -32,6 +34,36 @@
           <p>Mãos detectadas: <strong id="quantidade-maos">0</strong> / 2</p>
         </div>
         <p>Os 21 pontos e suas conexões são desenhados em cada mão detectada. O vídeo é processado neste aparelho, sem gravação nem envio a servidores.</p>
+      </section>
+      <section id="painel-coleta" class="painel" aria-labelledby="titulo-coleta">
+        <h2 id="titulo-coleta">Coletar exemplos</h2>
+        <p>Usamos apenas a mão <strong id="mao-configurada">configurada</strong>, mesmo quando duas aparecem. A outra mão não entra no vetor.</p>
+        <label for="gesto-coleta">Gesto do exemplo</label>
+        <select id="gesto-coleta" disabled></select>
+        <p id="instrucao-gesto"></p>
+        <p id="mao-coleta">Nenhuma mão selecionada.</p>
+        <button id="gravar-exemplo" type="button" disabled>Gravar exemplo</button>
+        <p>Cada clique guarda um vetor de 63 números, nunca imagens. Colete 30 a 50 exemplos por gesto, variando distância, ângulo e luz, com mais de uma pessoa. Mude a posição entre cliques.</p>
+        <table>
+          <caption>Exemplos disponíveis</caption>
+          <thead><tr><th scope="col">Gesto</th><th scope="col">Quantidade</th></tr></thead>
+          <tbody id="contagens-gestos"></tbody>
+        </table>
+        <p id="estado-coleta" role="status">Carregando configuração e exemplos locais…</p>
+        <button id="exportar-gestos" type="button" disabled>Exportar gestos.json</button>
+        <label for="importar-gestos">Importar gestos.json (substitui os exemplos em memória)</label>
+        <input id="importar-gestos" type="file" accept=".json,application/json" disabled>
+        <p>Exporte antes de fechar ou recarregar. Para usar a base automaticamente no site, copie o arquivo exportado para public/gestos.json e publique novamente.</p>
+      </section>
+      <section id="painel-teste" class="painel" aria-labelledby="titulo-teste" hidden>
+        <h2 id="titulo-teste">Teste em tempo real</h2>
+        <label for="k-vizinhos">Número de vizinhos (k)</label>
+        <input id="k-vizinhos" type="number" min="1" max="99" step="1" value="3">
+        <p>Gesto previsto: <strong id="gesto-previsto">Selecione Testar para classificar.</strong></p>
+        <p>Confiança: <strong id="confianca">—</strong></p>
+        <p>Palavra associada: <strong id="palavra-prevista">—</strong></p>
+        <p>A confiança é a proporção de votos dos vizinhos, não a probabilidade de acerto. Se houver menos exemplos que k, usamos todos os disponíveis. Uma forma desconhecida também pode receber um dos rótulos da base.</p>
+        <p>Para medir a precisão, faça 10 tentativas novas por gesto, sem gravá-las na base. Retire a mão e refaça a pose entre tentativas; anote os acertos por gesto.</p>
       </section>
     </main>
   </body>
