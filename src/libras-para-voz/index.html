@@ -3,17 +3,35 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Modelo, WASM e conexões só da própria origem; bloqueia telemetria do SDK. -->
+    <meta http-equiv="Content-Security-Policy" content="connect-src 'self'">
     <title>Libras → Voz | Tradutor Libras ↔ Voz</title>
     <link rel="stylesheet" href="/src/comum/estilos.css">
+    <link rel="stylesheet" href="./estilos.css">
+    <script type="module" src="./main.js"></script>
   </head>
   <body>
     <main>
       <a class="voltar" href="%BASE_URL%">Voltar ao início</a>
-      <p class="etapa">Demonstração acadêmica · Etapa 1</p>
+      <p class="etapa">Demonstração acadêmica · Etapa 5 — parte 1</p>
       <h1>Libras → Voz</h1>
-      <section class="painel" aria-labelledby="status">
-        <h2 id="status">Em preparação</h2>
-        <p>Em uma etapa futura, esta tela vai usar a câmera para reconhecer gestos estáticos e apresentar o resultado em texto e voz.</p>
+      <p>Rastreamento de até duas mãos. Esta parte mostra os pontos; o reconhecimento de gestos e a fala serão adicionados depois.</p>
+      <section class="painel" aria-labelledby="titulo-camera">
+        <h2 id="titulo-camera">Câmera e pontos das mãos</h2>
+        <div class="controles-camera">
+          <button id="iniciar-camera" type="button">Iniciar câmera</button>
+          <button id="parar-camera" type="button" disabled>Parar</button>
+        </div>
+        <p id="estado-camera" role="status">Clique em Iniciar câmera e permita o acesso.</p>
+        <div class="enquadramento">
+          <video id="camera" autoplay muted playsinline aria-label="Imagem espelhada da câmera"></video>
+          <canvas id="pontos" aria-hidden="true"></canvas>
+        </div>
+        <div class="metricas">
+          <p>FPS do rastreamento: <strong id="fps">0</strong></p>
+          <p>Mãos detectadas: <strong id="quantidade-maos">0</strong> / 2</p>
+        </div>
+        <p>Os 21 pontos e suas conexões são desenhados em cada mão detectada. O vídeo é processado neste aparelho, sem gravação nem envio a servidores.</p>
       </section>
     </main>
   </body>

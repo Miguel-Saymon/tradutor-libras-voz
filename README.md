@@ -1,6 +1,6 @@
 # Tradutor Libras ↔ Voz
 
-Protótipo acadêmico. A base entrega a navegação e o contrato compartilhado. A Etapa 2 adiciona voz, digitação e frases prontas na tela Voz → Libras.
+Protótipo acadêmico. Voz → Libras reúne captura, glosa didática e avatar. Libras → Voz está na primeira parte da Etapa 5: câmera e pontos das mãos, ainda sem classificar gestos nem produzir fala.
 
 ## Estrutura
 
@@ -12,11 +12,16 @@ src/
   voz-para-libras/reconhecimento.js  Controla as sessões da Web Speech API
   voz-para-libras/normalizar.js  Normaliza o texto antes da emissão
   voz-para-libras/estilos.css   Estilos básicos da captura
-  libras-para-voz/index.html    Tela que receberá o reconhecimento de gestos
+  libras-para-voz/index.html    Câmera espelhada, canvas e FPS
+  libras-para-voz/camera.js     Captura local e liberação da câmera
+  libras-para-voz/maos.js       MediaPipe, inferência e desenho dos pontos
+  libras-para-voz/main.js       Controles e estado da sessão
   comum/estilos.css            Layout, contraste e foco compartilhados
   comum/contrato.js            Síntese de voz e barramento de eventos
   comum/contrato.test.js       Testes unitários com Vitest
-public/sinais/.gitkeep         Reserva o diretório dos futuros vídeos locais
+public/sinais/                 Vídeos MP4 de reserva
+public/mediapipe/              Modelo de mãos e runtime WASM locais
+scripts/preparar-maos.mjs      Baixa o modelo e copia o WASM do pacote instalado
 vite.config.js                 Entradas HTML e caminho base de publicação
 .github/workflows/deploy.yml   Build e publicação no GitHub Pages
 ```
@@ -83,7 +88,7 @@ Os testes cobrem normalização e fluxo da interface com reconhecimento e elemen
 
 ## Publicar no GitHub Pages
 
-O build copia o player oficial em `public/vlibras/` e os dez MP4 de reserva em `public/sinais/` para o site.
+O build copia o player oficial em `public/vlibras/`, os dez MP4 de reserva em `public/sinais/` e o modelo/WASM em `public/mediapipe/` para o site. Inclua essas três pastas no Git.
 
 1. Crie um repositório público no GitHub. Envie o conteúdo desta pasta para a raiz da branch `main`, incluindo o workflow em `.github/workflows/` e o `package-lock.json`.
 2. Em **Settings → Pages → Build and deployment → Source**, selecione **GitHub Actions**.
@@ -120,10 +125,74 @@ O widget oferece uma interface de seleção de texto. Seu manual de incorporaç�
 
 O repositório separado **spbgovbr-vlibras/vlibras-player-webjs** implementa `Player.translate(text)` e `Player.play(glosa)`. A versão 2.4.2 no npm declara outro URL de repositório e outra estrutura de código. Usamos o runtime do widget para manter o conjunto de scripts, manifesto e binários da mesma revisão oficial. Para a Etapa 4, uma glosa válida do dicionário pode ser enviada diretamente ao mesmo comando de reprodução. [Player WebJS](https://github.com/spbgovbr-vlibras/vlibras-player-webjs/blob/dev/src/Player.js) · [Metadados do npm](https://registry.npmjs.org/vlibras-player-webjs/2.4.2)
 
-**Recursos locais.** O player usa o caminho do repositório fornecido por `import.meta.env.BASE_URL`. A pasta `public/vlibras/` ocupa aproximadamente **20,31 MB**. O maior arquivo mede **16.992.528 bytes**. O iframe adapta a ponte oficial para restringir mensagens à origem e à janela do aplicativo, fixa a versão do manifesto e comunica falha de WebGL à tela. O arquivo de licença acompanha a distribuição. [Fontes do Unity](https://github.com/spbgovbr-vlibras/vlibras-web-browsers/tree/d79ca86ad09109e77887537aa96cd485c89037e1/public/unity)
+**Recursos locais.** O player usa o caminho do repositório fornecido por `import.meta.env.BASE_URL`. A pasta `public/vlibras/` ocupa aproximadamente **21,16 MB**. O maior arquivo mede **16.992.528 bytes**. O iframe adapta a ponte oficial para restringir mensagens à origem e à janela do aplicativo, fixa a versão do manifesto e comunica falha de WebGL à tela. O arquivo de licença acompanha a distribuição. [Fontes do Unity](https://github.com/spbgovbr-vlibras/vlibras-web-browsers/tree/d79ca86ad09109e77887537aa96cd485c89037e1/public/unity)
 
-**Duas frases para o demo.** Para “bom dia” e “tudo bem?”, incluímos as respostas do tradutor oficial consultadas em 12/11/2026 (`BOM DIA` e `TUDO_BEM [INTERROGAÇÃO]`) e os respectivos bundles do dicionário WebGL BR. Essas duas animações funcionam com o aplicativo servido localmente. A transcrição pelo microfone pode precisar de internet. Para outros textos, o navegador envia o texto final ao tradutor VLibras de produção e o avatar consulta o dicionário remoto. A cobertura e a qualidade dependem dos sinais disponíveis. [Configuração de produção do VLibras](https://github.com/spbgovbr-vlibras/vlibras-web-browsers/blob/d79ca86ad09109e77887537aa96cd485c89037e1/src/core/config/index.ts)
+O conversor didático usa os identificadores confirmados no dicionário WebGL BR. Os sinais do vocabulário e as letras são servidos em `public/vlibras/sinais/`. A captura de voz pode exigir internet.
 
-**Plano B.** Se o carregamento, a tradução ou a animação falhar ou expirar, a tela avisa que entrou no modo de reserva. A frase atual, as pendentes e as seguintes usam os vídeos existentes de `public/sinais/`, conforme `frases.json`. Recarregue a página para tentar o avatar novamente. O código do componente é LGPL-3.0. Os termos do serviço VLibras restringem a aplicação das traduções automáticas em atividades educacionais. Confirme a adequação da apresentação acadêmica com os responsáveis pelo VLibras. [Licença do componente](https://github.com/spbgovbr-vlibras/vlibras-web-browsers/blob/d79ca86ad09109e77887537aa96cd485c89037e1/LICENSE) · [Termos do serviço](https://www.vlibras.gov.br/privacy.html)
+**Plano B.** Se o carregamento ou a animação falhar ou expirar, a tela avisa que entrou no modo de reserva. A frase atual, as pendentes e as seguintes usam os vídeos existentes de `public/sinais/`, conforme `frases.json`. Recarregue a página para tentar o avatar novamente. O código do componente é LGPL-3.0. Os termos do serviço VLibras restringem a aplicação das traduções automáticas em atividades educacionais. Confirme a adequação da apresentação acadêmica com os responsáveis pelo VLibras. [Licença do componente](https://github.com/spbgovbr-vlibras/vlibras-web-browsers/blob/d79ca86ad09109e77887537aa96cd485c89037e1/LICENSE) · [Termos do serviço](https://www.vlibras.gov.br/privacy.html)
 
 **Teste de aceite.** Abra Voz → Libras pelo HTTPS publicado. Clique em **bom dia** e **tudo bem?** e aguarde o fim de cada animação. Repita pelo microfone no notebook e no celular. Confira o texto final, o mesmo avatar Ícaro e a animação completa sem aviso de reserva. Para o critério linguístico, peça a uma pessoa fluente em Libras que valide dez rodadas de cada frase.
+
+## Etapa 4 — glosa por regras didáticas
+
+A fala, o formulário e os atalhos produzem texto final normalizado. A tela apresenta o texto, a glosa didática e o avatar em três colunas no notebook. Em telas estreitas, os painéis aparecem na mesma ordem, empilhados.
+
+`src/voz-para-libras/glosa.js` exporta a função pura `paraGlosa(texto)`. Cada chamada devolve um novo array com itens de sinal, soletração (lista de letras) ou sem sinal (token original). Expressões conhecidas têm prioridade sobre a remoção de artigos, preposições e formas de ser/estar. As tabelas de conjugação e vocabulário cobrem o demo. As palavras alfabéticas desconhecidas, inclusive nomes próprios, são soletradas. Como a entrada é minúscula, a regra não tenta identificar nomes pela inicial. Para a soletração, a tela preserva os acentos; o avatar usa as letras básicas disponíveis e mantém Ç. Tokens sem representação, como números, ficam marcados. Uma entrada inteiramente omitida ou com trecho sem sinal não inicia uma animação incompleta.
+
+`glosaParaTela` e `glosaParaVLibras` leem os mesmos itens. “Bom dia” aparece como **BOM-DIA** e envia `BOM DIA` ao player. “Tudo bem?” usa `TUDO_BEM [INTERROGAÇÃO]`. São sequências confirmadas para essas expressões. O marcador de pergunta faz parte da entrada fixa do player. As regras didáticas não modelam expressão facial nem uso do espaço e precisam de validação linguística. O programa monta a sequência em JavaScript e a envia como string ao comando `PlayerManager.playNow`. [Ações oficiais do player](https://github.com/spbgovbr-vlibras/vlibras-web-browsers/blob/d79ca86ad09109e77887537aa96cd485c89037e1/src/player/actions/index.ts)
+
+Para testar, execute `npm ci`, `npm test` e `npm run dev`. Abra **Voz → Libras** e envie “eu gosto de café”. O texto final deve aparecer junto de **EU · GOSTAR · CAFÉ**, e Ícaro deve executar a sequência. Envie “eu sou João” e confira a soletração. Envie “o a uma” para conferir a saída vazia. Os 15 casos de Vitest verificam entradas, saídas didáticas e tokens para o player. O plano B usa o texto original normalizado para localizar os MP4 de reserva. Antes da apresentação, peça a uma pessoa fluente em Libras para revisar os sinais e as regras.
+
+## Etapa 5 — parte 1: câmera e mãos
+
+Abra **Libras → Voz**, clique em **Iniciar câmera** e permita o acesso. O vídeo e o canvas são espelhados juntos, com a proporção original da câmera. O Hand Landmarker funciona em `VIDEO`, com `numHands: 2`; cada mão detectada recebe 21 pontos e suas conexões. **Parar** libera a câmera e o modelo. Sair da aba também encerra a captura; ao voltar, inicie novamente.
+
+`camera.js` pede a câmera frontal, sem áudio, com resolução preferida de 640 × 480 e até 30 quadros/s. `maos.js` usa `requestAnimationFrame`, processa somente quadros novos do vídeo e limpa o desenho quando não encontra mãos. Tenta GPU e usa CPU se a inicialização por GPU falhar. O contador mostra os quadros processados por segundo, atualizado a cada segundo, inclusive quando não há mãos. [API oficial e exemplo de vídeo](https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker?tab=Web)
+
+### Baixar e servir os recursos locais
+
+Os arquivos já acompanham este projeto. Para baixá-los novamente, execute na raiz, com internet:
+
+```powershell
+npm ci
+npm run preparar:maos
+npm run build
+npm run preview
+```
+
+O script `scripts/preparar-maos.mjs` baixa a versão 1 do [modelo oficial FP16](https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task) e valida seu SHA-256. Ele copia a pasta `node_modules/@mediapipe/tasks-vision/wasm/` inteira, incluindo os carregadores JavaScript, para `public/mediapipe/wasm/`. O pacote está fixado em **1.2.3**. Se atualizar a dependência, copie novamente os WASM para manter SDK e runtime da mesma versão.
+
+```text
+public/mediapipe/
+  hand_landmarker.task               7.819.105 bytes
+  wasm/
+    vision_wasm_internal.js            336.624 bytes
+    vision_wasm_internal.wasm       14.665.716 bytes
+    vision_wasm_module_internal.js     336.662 bytes
+    vision_wasm_module_internal.wasm 14.665.738 bytes
+  LICENSE
+  README.md
+```
+
+O conjunto ocupa aproximadamente **37,84 MB**. Nenhum arquivo novo excede 15 MB. Os caminhos são `${import.meta.env.BASE_URL}mediapipe/wasm` e `${import.meta.env.BASE_URL}mediapipe/hand_landmarker.task`. No Pages, por exemplo, o modelo fica em `/tradutor-libras-voz/mediapipe/hand_landmarker.task`. Envie a pasta `public/mediapipe/`, os fontes e os dois arquivos de dependências ao GitHub; o workflow já copia tudo para o site, sem baixar modelos no build.
+
+O SDK dessa versão tenta enviar telemetria de uso. A página da câmera restringe conexões à própria origem com a política `connect-src 'self'`, bloqueando esse envio. Um aviso de CSP no console sobre `odml.pa.googleapis.com` é esperado. Nenhum quadro é gravado ou enviado pelo aplicativo. [Aviso de privacidade oficial do MediaPipe](https://developers.google.com/edge/mediapipe/solutions/privacy)
+
+### Apresentar sem internet e testar nos aparelhos
+
+Prepare as dependências e o build antes da apresentação. No notebook, mantenha `npm run preview` aberto e use o endereço `http://localhost:4173/` informado pelo terminal (incluindo o caminho base, se configurado). O rastreamento não precisa de CDN nem serviço de reconhecimento remoto. Não abra o HTML por `file://`.
+
+No celular, use o endereço **HTTPS** do GitHub Pages para o teste normal. `http://192.168.15.4:5173/` não oferece um contexto seguro e não libera a câmera. Para uma apresentação móvel sem internet, é necessário um servidor HTTPS local com certificado confiável no celular, ou encaminhar a porta por USB no Chrome/Android para acessar o servidor como `localhost`. Ter Wi-Fi local não é o mesmo que ter internet. O Pages precisa de conexão para abrir/recarregar o site; este projeto não instala cache offline/service worker. [Requisito de contexto seguro de getUserMedia](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia)
+
+Roteiro de aceite no notebook e no celular:
+
+1. Inicie a câmera e mostre uma mão aberta bem iluminada. Confira os pontos nos dedos e no pulso.
+2. Mova a mão para os lados e aproxime/afaste. O desenho deve acompanhar a imagem espelhada.
+3. Mostre duas mãos e confira a contagem `2 / 2`; retire ambas e confira que os pontos desaparecem.
+4. Observe o FPS por pelo menos 30 segundos. Registre aparelho, navegador e intervalo observado; FPS medido em emulação não representa o desempenho do celular real.
+5. Pare e inicie de novo. A câmera deve desligar ao parar e retomar ao iniciar. Negue a permissão uma vez e confira o aviso e a possibilidade de tentar novamente.
+6. Para conferir os recursos locais, abra DevTools → Network: modelo e WASM devem vir da mesma origem, sem erros 404. Depois de carregar a tela e os recursos, desconecte a internet mantendo o servidor local acessível e continue movendo as mãos.
+
+**Validação automatizada:** `npm test` cobre os fluxos existentes e a câmera, incluindo permissão tardia, falha de reprodução e encerramento do dispositivo. O teste de navegador usa o modelo real com uma imagem oficial de duas mãos convertida em fluxo de vídeo, além de uma câmera de teste do Chromium. Isso verifica integração, desenho e caminhos locais; o aceite de movimento e desempenho em hardware físico continua sendo feito pelo roteiro acima.
+
+**Limite de performance:** `detectForVideo` é síncrono. Nesta base, inferência e desenho ficam na thread principal, evitando transferência de quadros e complexidade de Worker antes de medir nos aparelhos. A captura limitada e o descarte de quadros repetidos reduzem trabalho. Se o painel Performance mostrar travamentos nos dispositivos-alvo, o próximo ajuste é levar a inferência para um Web Worker e manter apenas o desenho no `requestAnimationFrame` da tela. Esta entrega ainda não reconhece sinais de Libras. A próxima parte é coletar exemplos e implementar normalização/KNN; valide os gestos com uma pessoa que saiba Libras.

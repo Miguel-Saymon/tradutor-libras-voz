@@ -1,11 +1,13 @@
 import { EVENTOS, ouvir } from '../comum/contrato.js'
 import { criarAvatar } from './vlibras.js'
 import { criarPlanoB } from './videos.js'
+import { paraGlosa, glosaParaTela, glosaParaVLibras } from './glosa.js'
 
 const area = document.querySelector('#avatar-vlibras')
 const legenda = document.querySelector('#legenda-sinal')
 const aviso = document.querySelector('#aviso-avatar')
 const repetir = document.querySelector('#repetir-sinal')
+const painelGlosa = document.querySelector('#glosa')
 const fila = []
 let avatar
 let planoB
@@ -14,19 +16,27 @@ let executando = false
 let geracao = 0
 
 async function enviar(texto) {
+  const itens = paraGlosa(texto)
+  painelGlosa.textContent = glosaParaTela(itens) || 'Sem itens após aplicar as regras.'
+  const glosa = glosaParaVLibras(itens)
   if (planoB) return planoB(texto)
-  fila.push(texto)
+  fila.push({ texto, glosa })
   if (executando) return
   executando = true
   repetir.disabled = true
   const sessao = geracao
   while (fila.length && geracao === sessao) {
-    const frase = fila.shift()
+    const { texto: frase, glosa } = fila.shift()
+    if (!glosa) {
+      ultimo = ''
+      legenda.textContent = 'Sem sequência de sinais para esta entrada.'
+      continue
+    }
     try {
       aviso.textContent = avatar ? '' : 'Carregando o avatar VLibras…'
       avatar ??= criarAvatar(area)
       legenda.textContent = frase
-      await avatar.sinalizar(frase)
+      await avatar.sinalizar(glosa)
       if (geracao !== sessao) return
       aviso.textContent = ''
       ultimo = frase
@@ -37,7 +47,7 @@ async function enviar(texto) {
       aviso.textContent = 'VLibras indisponível. Usando os vídeos de reserva.'
       planoB = criarPlanoB()
       planoB(frase)
-      for (const proxima of fila.splice(0)) planoB(proxima)
+      for (const proxima of fila.splice(0)) planoB(proxima.texto)
     }
   }
   executando = false

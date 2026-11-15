@@ -1,30 +1,5 @@
 // Protocolo do iframe oficial fixado na revisão indicada no README.
 const raiz = new URL(import.meta.env.BASE_URL + 'vlibras/', location.href)
-const dicionario = 'https://dicionario2.vlibras.gov.br/2018.3.1/WEBGL/BR/'
-const tradutor = 'https://traducao2.vlibras.gov.br/translate'
-
-// Respostas reais do tradutor para as duas frases do aceite.
-const demonstracao = new Map([
-  ['bom dia', 'BOM DIA'],
-  ['tudo bem', 'TUDO_BEM [INTERROGAÇÃO]'],
-])
-
-async function traduzir(texto, signal) {
-  const resposta = await fetch(tradutor, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: texto }),
-    signal: AbortSignal.any([signal, AbortSignal.timeout(15000)]),
-  })
-  if (!resposta.ok) throw new Error('Serviço de tradução indisponível.')
-  const corpo = (await resposta.text()).trim()
-  const glosa = corpo.startsWith('{') ? JSON.parse(corpo).traducao : corpo
-  if (typeof glosa !== 'string' || !glosa.trim() || glosa.startsWith('<')) {
-    throw new Error('O tradutor retornou uma resposta inválida.')
-  }
-  return glosa
-}
-
 export function criarAvatar(area) {
   const frame = document.createElement('iframe')
   frame.title = 'Ícaro, avatar 3D do VLibras'
@@ -73,12 +48,10 @@ export function criarAvatar(area) {
   area.replaceChildren(frame)
 
   return {
-    async sinalizar(texto) {
+    async sinalizar(glosa) {
       await pronto
-      const local = demonstracao.get(texto)
-      const glosa = local || await traduzir(texto, sessao.signal)
       sessao.signal.throwIfAborted()
-      comando('setBaseUrl', local ? new URL('sinais/', raiz).href : dicionario)
+      comando('setBaseUrl', new URL('sinais/', raiz).href)
       reproduzindo = false
       const terminou = aguardar(90000, 'O avatar não concluiu a animação.')
       comando('playNow', glosa)

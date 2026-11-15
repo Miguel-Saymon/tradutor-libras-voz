@@ -24,7 +24,9 @@ it('envia textos finais em ordem para uma única instância do avatar', async ()
   enviar('bom dia')
   enviar('tudo bem')
   enviar('outra frase')
-  await vi.waitFor(() => expect(sinalizar.mock.calls.flat()).toEqual(['bom dia', 'tudo bem', 'outra frase']))
+  await vi.waitFor(() => expect(sinalizar.mock.calls.flat()).toEqual([
+    'BOM DIA', 'TUDO_BEM [INTERROGAÇÃO]', 'O U T R A F R A S E',
+  ]))
   expect(simulados.criarAvatar).toHaveBeenCalledTimes(1)
   expect(simulados.criarPlanoB).not.toHaveBeenCalled()
 })

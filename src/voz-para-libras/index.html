@@ -37,12 +37,18 @@
           <button type="button" data-frase="não">não</button>
         </div>
       </section>
+      <div class="camadas">
       <section class="painel" aria-labelledby="resultado">
         <h2 id="resultado">Texto reconhecido</h2>
         <h3>Parcial</h3>
         <p id="parcial"></p>
         <h3>Final</h3>
         <p id="final" aria-live="polite"></p>
+      </section>
+      <section class="painel" aria-labelledby="titulo-glosa">
+        <h2 id="titulo-glosa">Glosa</h2>
+        <p id="glosa" aria-live="polite"></p>
+        <p>Regras didáticas. A glosa não representa expressão facial nem uso do espaço.</p>
       </section>
       <section class="painel" aria-labelledby="titulo-sinal">
         <h2 id="titulo-sinal">Sinal em Libras</h2>
@@ -52,6 +58,7 @@
         <div id="video-sinal"></div>
         <button id="repetir-sinal" type="button" disabled>Repetir</button>
       </section>
+      </div>
     </main>
   </body>
 </html>

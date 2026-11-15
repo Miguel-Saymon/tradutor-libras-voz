@@ -32,3 +32,14 @@ input { width: 100%; min-width: 0; }
   aspect-ratio: 4 / 3;
   border: 0;
 }
+
+.camadas {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.camadas > .painel { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+#glosa { font-weight: 700; }
+@media (min-width: 48rem) {
+  .camadas { grid-template-columns: 1fr 1fr 1.5fr; }
+}
