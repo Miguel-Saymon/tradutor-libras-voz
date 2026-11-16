@@ -13,17 +13,14 @@
   <body>
     <main class="pagina-traducao">
       <header class="cabecalho-traducao">
-        <div class="barra-topo">
-          <a class="voltar" href="%BASE_URL%">Voltar ao início</a>
-          <p class="etapa">Demonstração acadêmica</p>
-        </div>
-        <h1>Voz → Libras</h1>
+        <h1 class="placas"><span class="placa-voz">Voz</span><span class="placa-seta">→</span><span class="placa-libras">Libras</span></h1>
+        <a class="voltar" href="%BASE_URL%">Voltar ao início</a>
       </header>
       <div class="layout-traducao">
-        <section class="painel bloco-com-rolagem bloco-entrada" aria-labelledby="entrada">
+        <section class="painel painel-voz bloco-com-rolagem bloco-entrada" aria-labelledby="entrada">
           <h2 id="entrada">Fale ou digite uma frase</h2>
           <div class="area-rolavel" tabindex="0" role="region" aria-label="Entrada, texto reconhecido e glosa">
-            <button id="falar" type="button" aria-pressed="false">Falar</button>
+            <button id="falar" class="acao-principal" type="button" aria-pressed="false">Falar</button>
             <p id="status" role="status">Toque em Falar e diga uma frase curta.</p>
             <form id="formulario">
               <label for="frase">Frase em português</label>
@@ -59,7 +56,7 @@
             </div>
           </div>
         </section>
-        <section class="painel bloco-fixo bloco-avatar" aria-labelledby="titulo-sinal">
+        <section class="painel painel-libras bloco-fixo bloco-avatar" aria-labelledby="titulo-sinal">
           <h2 id="titulo-sinal">Avatar sinalizando</h2>
           <div id="avatar-vlibras"></div>
           <p id="aviso-avatar" role="status"></p>
@@ -68,6 +65,9 @@
           <button id="repetir-sinal" type="button" aria-label="Repetir sinal" disabled>Repetir</button>
         </section>
       </div>
+      <footer class="rodape-traducao">
+        <p class="etapa">Demonstração acadêmica</p>
+      </footer>
     </main>
   </body>
 </html>

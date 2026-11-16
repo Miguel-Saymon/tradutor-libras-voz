@@ -14,17 +14,14 @@
   <body>
     <main class="pagina-traducao">
       <header class="cabecalho-traducao">
-        <div class="barra-topo">
-          <a class="voltar" href="%BASE_URL%">Voltar ao início</a>
-          <p class="etapa">Demonstração acadêmica · Etapa 5 — parte 2</p>
-        </div>
-        <h1>Libras → Voz</h1>
+        <h1 class="placas"><span class="placa-libras">Libras</span><span class="placa-seta">→</span><span class="placa-voz">Voz</span></h1>
+        <a class="voltar" href="%BASE_URL%">Voltar ao início</a>
       </header>
       <div class="layout-traducao">
-        <section class="painel bloco-fixo bloco-camera" aria-labelledby="titulo-camera">
+        <section class="painel painel-libras bloco-fixo bloco-camera" aria-labelledby="titulo-camera">
           <h2 id="titulo-camera">Câmera e pontos das mãos</h2>
           <div class="controles-camera">
-            <button id="iniciar-camera" type="button" aria-label="Iniciar câmera">Iniciar câmera</button>
+            <button id="iniciar-camera" class="acao-principal" type="button" aria-label="Iniciar câmera">Iniciar câmera</button>
             <button id="parar-camera" type="button" aria-label="Parar câmera" disabled>Parar</button>
           </div>
           <p id="estado-camera" role="status">Câmera desligada. Clique em Iniciar câmera e permita o acesso.</p>
@@ -41,7 +38,7 @@
             <p>Os 21 pontos e suas conexões são desenhados em cada mão detectada. O vídeo é processado neste aparelho, sem gravação nem envio a servidores.</p>
           </details>
         </section>
-        <section class="painel bloco-com-rolagem bloco-gestos" aria-labelledby="titulo-reconhecimento">
+        <section class="painel painel-voz bloco-com-rolagem bloco-gestos" aria-labelledby="titulo-reconhecimento">
           <h2 id="titulo-reconhecimento">Gesto reconhecido</h2>
           <div class="resultado-gesto">
             <p id="gesto-previsto">Selecione Testar para classificar.</p>
@@ -95,6 +92,9 @@
           </div>
         </section>
       </div>
+      <footer class="rodape-traducao">
+        <p class="etapa">Demonstração acadêmica · Etapa 5 — parte 2</p>
+      </footer>
     </main>
   </body>
 </html>
