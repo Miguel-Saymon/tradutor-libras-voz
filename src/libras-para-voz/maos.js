@@ -55,8 +55,8 @@ export async function criarRastreador(video, canvas, { aoMedir = () => {}, aoErr
         const resultado = detector.detectForVideo(video, agora)
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         for (const pontos of resultado.landmarks) {
-          desenho.drawConnectors(pontos, HandLandmarker.HAND_CONNECTIONS, { color: '#00ffb3', lineWidth: 3 })
-          desenho.drawLandmarks(pontos, { color: '#ffffff', fillColor: '#c02635', radius: 4, lineWidth: 1 })
+          desenho.drawConnectors(pontos, HandLandmarker.HAND_CONNECTIONS, { color: '#9cc2f3', lineWidth: 3 })
+          desenho.drawLandmarks(pontos, { color: '#0b1f3a', fillColor: '#ffc83d', radius: 4, lineWidth: 1 })
         }
         totalMaos = resultado.landmarks.length
         // Compartilha apenas pontos; câmera, inferência e desenho continuam aqui.

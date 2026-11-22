@@ -1,8 +1,22 @@
+/* Identidade visual: cada lado da tradução tem uma cor fixa.
+   Amarelo é a Voz, azul é a Libras e o verde (a mistura dos dois) é a ponte.
+   O amarelo só aparece como fundo, sempre com texto --tinta por cima. */
 :root {
-  font-family: system-ui, sans-serif;
+  --voz: #ffc83d;
+  --voz-clara: #fff1c7;
+  --libras: #0b5fd8;
+  --libras-clara: #dcebfb;
+  --libras-grifo: #9cc2f3;
+  --ponte: #0f4f3c;
+  --tinta: #0b1f3a;
+  --tinta-suave: #4a5d78;
+  --papel: #fff;
+  --linha: rgb(11 31 58 / .22);
+
+  font-family: "Atkinson Hyperlegible", Verdana, system-ui, sans-serif;
   line-height: 1.55;
-  color: #142a2b;
-  background: #f0f6f4;
+  color: var(--tinta);
+  background: var(--papel);
 }
 
 * { box-sizing: border-box; }
@@ -15,70 +29,128 @@ main {
   padding: clamp(1.25rem, 5vw, 4rem);
 }
 
-.etapa {
-  color: #315752;
-  font-size: .875rem;
-  font-weight: 700;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
 h1 {
-  margin-block: .4rem 1rem;
-  font-size: clamp(2rem, 7vw, 4rem);
-  line-height: 1.08;
+  margin-block: 0 1rem;
+  font-size: clamp(1.9rem, 5vw, 3rem);
+  line-height: 1.25;
   overflow-wrap: anywhere;
 }
 
 p { max-width: 60ch; }
 
+/* Título da tela inicial: entra subindo e depois cada palavra é grifada
+   na cor do seu lado. O estado final é o padrão; a animação parte do vazio. */
+.grifo {
+  background: linear-gradient(var(--voz), var(--voz)) no-repeat 0 88% / 100% .38em;
+}
+.grifo-libras {
+  background-image: linear-gradient(var(--libras-grifo), var(--libras-grifo));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .titulo-grifado { animation: entrar .5s cubic-bezier(.2, .7, .2, 1) backwards; }
+  .grifo { animation: grifar .45s cubic-bezier(.3, .7, .2, 1) .55s backwards; }
+  .grifo-voz { animation-delay: .95s; }
+}
+
+@keyframes entrar {
+  from { opacity: 0; transform: translateY(.5em); }
+}
+
+@keyframes grifar {
+  from { background-size: 0 .38em; }
+}
+
 .opcoes {
   display: grid;
-  gap: 1rem;
+  gap: .75rem;
   margin-block: 2rem;
 }
 
 .cartao {
+  position: relative;
   display: grid;
-  align-content: start;
-  gap: .6rem;
-  min-height: 9rem;
+  align-content: center;
+  justify-items: center;
+  gap: 1rem;
+  min-height: 14rem;
+  text-align: center;
   padding: 1.25rem;
-  border: 1px solid #0b4d47;
-  border-radius: 1rem;
-  color: #fff;
-  background: #0b4d47;
   text-decoration: none;
 }
 
-.cartao:nth-child(2) {
-  color: #142a2b;
-  background: #e0efea;
+.cartao-voz {
+  --cartao-texto: var(--tinta);
+  --cartao-fundo: var(--voz);
 }
 
-.cartao strong { font-size: 1.45rem; }
+.cartao-libras {
+  --cartao-texto: #fff;
+  --cartao-fundo: var(--libras);
+}
 
-.cartao:hover strong { text-decoration: underline; }
+.cartao {
+  color: var(--cartao-texto);
+  background: var(--cartao-fundo);
+}
+
+/* Rota do cartão: duas caixas vazadas, origem → destino. No hover (ou foco)
+   elas se preenchem uma depois da outra, no sentido da tradução. */
+.rota {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+  line-height: 1;
+}
+
+.caixa {
+  padding: .45em .6em;
+  border: 2px solid currentColor;
+  transition: color .2s, background-color .2s;
+}
+
+.caixa:last-child { transition-delay: .12s; }
+
+.cartao:is(:hover, :focus-visible) .caixa {
+  color: var(--cartao-fundo);
+  background: var(--cartao-texto);
+  border-color: var(--cartao-texto);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caixa { transition: none; }
+}
 
 a:focus-visible {
-  outline: 3px solid #853719;
+  outline: 3px solid var(--tinta);
   outline-offset: 4px;
+}
+
+.etapa {
+  color: var(--tinta-suave);
+  font-size: .875rem;
 }
 
 .voltar {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  color: #0b4d47;
+  color: var(--tinta);
+  font-weight: 700;
+  text-underline-offset: 3px;
 }
 
 .painel {
   margin-block-start: 2rem;
   padding: 1.25rem;
-  border: 1px solid #a1beb5;
-  border-radius: 1rem;
-  background: #fff;
+  background: var(--libras-clara);
 }
+
+.painel-voz { background: var(--voz-clara); }
+.painel-libras { background: var(--libras-clara); }
 
 .painel h2 { margin-top: 0; }
 .painel p:last-child { margin-bottom: 0; }

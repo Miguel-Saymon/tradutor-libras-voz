@@ -1,5 +1,5 @@
 .controles-camera { display: flex; flex-wrap: wrap; gap: .75rem; }
-.enquadramento { position: relative; background: #142a2b; border-radius: .5rem; overflow: hidden; }
+.enquadramento { position: relative; background: var(--tinta); overflow: hidden; }
 /* Ambos contêm a imagem na mesma caixa, inclusive com faixas laterais.
    O canvas usa a proporção intrínseca atualizada pelo rastreador existente. */
 .enquadramento video { display: block; width: 100%; height: auto; aspect-ratio: auto 4 / 3; }
@@ -7,7 +7,7 @@
 .enquadramento video, .enquadramento canvas { object-fit: contain; transform: scaleX(-1); }
 .metricas { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; font-variant-numeric: tabular-nums; }
 .bloco-camera .ajuda { margin-top: .25rem; }
-.resultado-gesto { padding: .75rem 1rem; border-radius: .5rem; background: #e7f2ed; border: 1px solid #a1beb5; }
+.resultado-gesto { padding: .75rem 1rem; background: var(--papel); }
 #gesto-previsto { font-size: clamp(1.2rem, 2vw, 1.6rem); font-weight: 700; line-height: 1.25; margin: 0; }
 .resumo-gesto { display: flex; flex-wrap: wrap; gap: .25rem 1rem; font-variant-numeric: tabular-nums; }
 .bloco-gestos > label { margin-top: .75rem; }
@@ -18,7 +18,7 @@ input[type="file"] { width: 100%; }
 input[type="number"] { width: 7rem; }
 table { width: 100%; border-collapse: collapse; margin-top: .75rem; }
 caption { text-align: left; font-weight: bold; }
-th, td { text-align: left; padding: .35rem; border-bottom: 1px solid #a1beb5; overflow-wrap: anywhere; }
+th, td { text-align: left; padding: .35rem; border-bottom: 1px solid var(--linha); overflow-wrap: anywhere; }
 @media (min-width: 48rem) {
   .enquadramento video { max-height: clamp(12rem, calc(100dvh - 28rem), 26rem); }
 }

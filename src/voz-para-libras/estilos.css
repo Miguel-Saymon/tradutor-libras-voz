@@ -1,20 +1,22 @@
 form { display: grid; gap: .5rem; margin-top: .75rem; }
 input { width: 100%; min-width: 0; }
 .frases { display: flex; flex-wrap: wrap; gap: .5rem; }
-#parcial { color: #666; }
-#final { color: #000; font-weight: 600; }
+.layout-traducao .frases button { font-weight: 400; background: var(--papel); border-color: var(--papel); }
+.layout-traducao .frases button:hover { color: var(--tinta); background: var(--papel); border-color: var(--tinta); }
+#parcial { color: var(--tinta-suave); }
+#final { color: var(--tinta); font-weight: 700; }
 #parcial, #final, #glosa { min-height: 1.5em; overflow-wrap: anywhere; }
 .camadas { display: grid; gap: .75rem; margin-top: .75rem; }
-.camadas > section { min-width: 0; padding: .75rem; border: 1px solid #cfddd7; border-radius: .5rem; background: #f6faf8; }
+.camadas > section { min-width: 0; padding: .75rem; background: var(--papel); }
 .camadas h3 { margin-top: 0; }
 .camadas .rotulo-texto { font-size: .8rem; margin-bottom: 0; }
 .camadas #parcial, .camadas #final { margin-top: 0; }
 #glosa { font-weight: 700; }
 .nota-glosa { font-size: .85rem; }
-#avatar-vlibras { background: #f6faf8; border-radius: .5rem; }
-#avatar-vlibras:empty { aspect-ratio: 4 / 3; display: grid; place-items: center; border: 1px dashed #a1beb5; }
-#avatar-vlibras:empty::before { content: 'Envie uma frase para iniciar o avatar.'; padding: 1rem; text-align: center; color: #315752; }
-#avatar-vlibras iframe { display: block; width: 100%; aspect-ratio: 4 / 3; border: 0; border-radius: .5rem; }
+#avatar-vlibras { background: var(--papel); }
+#avatar-vlibras:empty { aspect-ratio: 4 / 3; display: grid; place-items: center; }
+#avatar-vlibras:empty::before { content: 'Envie uma frase para iniciar o avatar.'; padding: 1rem; text-align: center; color: var(--tinta-suave); }
+#avatar-vlibras iframe { display: block; width: 100%; aspect-ratio: 4 / 3; border: 0; }
 #video-sinal video { display: block; width: 100%; height: auto; object-fit: contain; margin-block: .5rem; }
 @media (min-width: 48rem) {
   form { grid-template-columns: minmax(0, 1fr) auto; }
