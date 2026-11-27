@@ -7,9 +7,9 @@ const config = validarConfig(configArquivo)
 const amostra = () => ({ gesto: config.gestos[0].id, vetor: Array(63).fill(0) })
 
 describe('arquivos da coleta', () => {
-  it('aceita os arquivos iniciais, sem inventar exemplos treinados', () => {
+  it('aceita a configuração e os exemplos publicados, preservando todos os vetores', () => {
     expect(config.gestos).toHaveLength(3)
-    expect(validarBase(baseArquivo, config)).toEqual(criarBase('Right'))
+    expect(validarBase(baseArquivo, config)).toEqual(baseArquivo)
   })
   it('exportar e importar JSON preserva vetores, sem compartilhar referências', () => {
     const base = { ...criarBase(), exemplos: [amostra()] }

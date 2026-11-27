@@ -25,7 +25,7 @@ src/
 public/sinais/                 Vídeos MP4 de reserva
 public/mediapipe/              Modelo de mãos e runtime WASM locais
 public/gestos-config.json      Gestos, instruções, palavras e mão selecionada
-public/gestos.json             Base de vetores (inicialmente vazia)
+public/gestos.json             Base de vetores coletados para os três gestos
 scripts/preparar-maos.mjs      Baixa o modelo e copia o WASM do pacote instalado
 vite.config.js                 Entradas HTML e caminho base de publicação
 .github/workflows/deploy.yml   Build e publicação no GitHub Pages
@@ -221,7 +221,7 @@ A normalização remove translação e escala uniforme; não remove rotação ne
 5. **Importar gestos.json** substitui a base em memória após validar todo o arquivo. Um arquivo inválido deixa os exemplos anteriores intactos. A configuração e os vetores são reconstruídos com campos permitidos; campos extras, inclusive imagens, são descartados. O limite é de 5.000 exemplos e 8 MB por importação.
 6. Para carregar automaticamente, copie o download para **public/gestos.json**. No GitHub Pages, envie esse arquivo ao repositório e publique novamente. Importar pelo navegador não altera os arquivos do projeto nem o site publicado.
 
-A base entregue está vazia de propósito: não há exemplos humanos coletados ainda. Tanto `gestos.json` quanto `gestos-config.json` são buscados com `import.meta.env.BASE_URL`, sem CDN. O arquivo de exemplos contém `versao: 1`, `normalizacao: "pulso-medio-world-xyz-v1"`, `mao: "Right"` e `exemplos`, uma lista de objetos `{ gesto, vetor }`. Preserve esses metadados ao exportar/importar.
+A base publicada reúne os três arquivos fornecidos pelo usuário (`gestos.json`, `gestos(1).json` e `gestos(2).json`), incorporados em 27/11/2026: **947 exemplos**, sendo **308 de mão aberta**, **304 de punho fechado** e **335 de indicador para cima**. Todos passaram pela validação de formato; não foram encontrados vetores repetidos. A precisão do classificador ainda deve ser medida pelo roteiro abaixo. Tanto `gestos.json` quanto `gestos-config.json` são buscados com `import.meta.env.BASE_URL`, sem CDN. O arquivo de exemplos contém `versao: 1`, `normalizacao: "pulso-medio-world-xyz-v1"`, `mao: "Right"` e `exemplos`, uma lista de objetos `{ gesto, vetor }`. Preserve esses metadados ao exportar/importar.
 
 Os três gestos iniciais confirmados são associações para testar o classificador:
 
