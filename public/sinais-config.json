@@ -1,0 +1,9 @@
+{
+  "mao": "Right",
+  "sinais": [
+    { "id": "oi", "nome": "Oi", "palavra": "oi", "video": "oi.mp4", "instrucao": "Com a mão direita perto do rosto, troque o formato da mão como no vídeo de referência." },
+    { "id": "tchau", "nome": "Tchau", "palavra": "tchau", "video": "tchau.mp4", "instrucao": "Mão direita aberta ao lado da cabeça, acenando." },
+    { "id": "sim", "nome": "Sim", "palavra": "sim", "video": "sim.mp4", "instrucao": "Mão direita fechada na altura do ombro, balançando para cima e para baixo." },
+    { "id": "nao", "nome": "Não", "palavra": "não", "video": "não.mp4", "instrucao": "Indicador direito para cima, na altura do ombro, balançando de um lado para o outro." }
+  ]
+}

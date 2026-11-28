@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Modelo, WASM e conexões só da própria origem; bloqueia telemetria do SDK. -->
+    <meta http-equiv="Content-Security-Policy" content="connect-src 'self'">
+    <title>Laboratório de sinais | Tradutor Libras ↔ Voz</title>
+    <link rel="stylesheet" href="/src/comum/estilos.css">
+    <link rel="stylesheet" href="/src/comum/layout-traducao.css">
+    <link rel="stylesheet" href="./estilos.css">
+    <script type="module" src="./main.js"></script>
+  </head>
+  <body>
+    <main class="pagina-traducao">
+      <header class="cabecalho-traducao">
+        <h1 class="placas"><span class="placa-libras">Sinais</span><span class="placa-seta">→</span><span class="placa-voz">Voz</span></h1>
+        <a class="voltar" href="%BASE_URL%">Voltar ao início</a>
+      </header>
+      <div class="layout-traducao">
+        <section class="painel painel-libras bloco-fixo bloco-camera" aria-labelledby="titulo-camera">
+          <h2 id="titulo-camera">Câmera</h2>
+          <div class="controles-camera">
+            <button id="iniciar-camera" class="acao-principal" type="button" aria-label="Iniciar câmera">Iniciar câmera</button>
+            <button id="parar-camera" type="button" aria-label="Parar câmera" disabled>Parar</button>
+          </div>
+          <p id="estado-camera" role="status">Câmera desligada. Clique em Iniciar câmera e permita o acesso.</p>
+          <div class="enquadramento">
+            <video id="camera" autoplay muted playsinline aria-label="Imagem espelhada da câmera"></video>
+            <canvas id="pontos" aria-hidden="true"></canvas>
+          </div>
+          <div id="caixa-trecho" class="estado-trecho" data-fase="desligado">
+            <p id="estado-trecho" role="status">Inicie a câmera para coletar ou testar sinais.</p>
+            <span id="duracao-trecho" aria-hidden="true"></span>
+          </div>
+          <div class="metricas">
+            <p>FPS: <strong id="fps">0</strong></p>
+          </div>
+          <details class="ajuda">
+            <summary>Sobre a captura</summary>
+            <p>O vídeo é processado neste aparelho, sem gravação nem envio a servidores. De cada quadro guardamos só números: o formato da mão, a posição do pulso e o tamanho da mão na imagem.</p>
+          </details>
+        </section>
+        <section class="painel painel-voz bloco-com-rolagem bloco-sinais" aria-labelledby="titulo-sinais">
+          <h2 id="titulo-sinais">Sinais com movimento</h2>
+          <label for="modo-sinais">Coletar ou testar</label>
+          <select id="modo-sinais" aria-controls="painel-coleta painel-teste" disabled>
+            <option value="coleta">Coletar exemplos</option><option value="teste">Testar e falar</option>
+          </select>
+          <div class="area-rolavel" tabindex="0" role="region" aria-label="Controles de coleta e teste">
+            <section id="painel-coleta" aria-labelledby="titulo-coleta">
+              <h3 id="titulo-coleta">Coletar exemplos</h3>
+              <p>Cada vez que a mão entra e sai da câmera vira um exemplo do sinal escolhido.</p>
+              <label for="sinal-coleta">Sinal</label>
+              <select id="sinal-coleta" disabled></select>
+              <p id="instrucao-sinal"></p>
+              <figure class="referencia">
+                <video id="video-referencia" controls muted loop playsinline preload="metadata" aria-label="Vídeo de referência do sinal"></video>
+                <figcaption>Vídeo de referência</figcaption>
+              </figure>
+              <div class="acoes">
+                <button id="desfazer-exemplo" type="button" aria-label="Desfazer o último exemplo gravado" disabled>Desfazer último</button>
+              </div>
+              <table>
+                <caption>Exemplos disponíveis</caption>
+                <thead><tr><th scope="col">Sinal</th><th scope="col">Quantidade</th></tr></thead>
+                <tbody id="contagens-sinais"></tbody>
+              </table>
+              <p id="estado-coleta" role="status">Carregando configuração e exemplos locais…</p>
+              <div class="acoes">
+                <button id="exportar-sinais" type="button" aria-label="Exportar exemplos para sinais-exemplos.json" disabled>Exportar sinais-exemplos.json</button>
+              </div>
+              <label for="importar-sinais">Importar sinais-exemplos.json (substitui os exemplos em memória)</label>
+              <input id="importar-sinais" type="file" accept=".json,application/json" disabled>
+              <details class="ajuda">
+                <summary>Como coletar e salvar</summary>
+                <p>Escolha o sinal, levante a mão direita, faça o sinal uma vez e abaixe a mão até ela sair da câmera. Repita de 15 a 20 vezes por sinal, variando velocidade e posição, de preferência com mais de uma pessoa. Se um exemplo sair errado, use Desfazer último.</p>
+                <p>Exporte antes de fechar ou recarregar. Para a página já abrir com os exemplos, copie o arquivo exportado para public/sinais-exemplos.json e publique novamente.</p>
+              </details>
+            </section>
+            <section id="painel-teste" aria-labelledby="titulo-teste" hidden>
+              <h3 id="titulo-teste">Testar e falar</h3>
+              <div class="resultado-sinal">
+                <p id="sinal-reconhecido">Faça um sinal para testar.</p>
+                <p id="detalhe-resultado"></p>
+              </div>
+              <div class="frase">
+                <p class="rotulo">Frase</p>
+                <p id="frase-montada" aria-live="polite">—</p>
+                <div class="acoes">
+                  <button id="falar-frase" class="acao-principal" type="button">Falar frase</button>
+                  <button id="limpar-frase" type="button">Limpar</button>
+                </div>
+              </div>
+              <label class="marcar"><input id="falar-ao-reconhecer" type="checkbox" checked> Falar cada sinal reconhecido</label>
+              <label for="k-vizinhos">Número de vizinhos (k)</label>
+              <input id="k-vizinhos" type="number" min="1" max="99" step="1" value="3">
+              <label for="limiar-distancia">Limite de distância</label>
+              <input id="limiar-distancia" type="number" min="0" step="0.001" placeholder="sem limite">
+              <div class="acoes">
+                <button id="avaliar-base" type="button" disabled>Avaliar a base</button>
+              </div>
+              <p id="resultado-avaliacao" role="status"></p>
+              <details class="ajuda">
+                <summary>Como o reconhecimento decide</summary>
+                <p>Cada sinal feito é comparado com todos os exemplos por DTW, que alinha movimentos mesmo quando um é mais rápido que o outro. Os k exemplos mais parecidos votam.</p>
+                <p>O sinal só vale se ficar abaixo do limite de distância, se a maioria dos vizinhos concordar e se a mão se mexer pelo menos um pouco como nos exemplos (punho parado não vira “sim”). O limite é recalculado a partir dos exemplos sempre que você entra em Testar; deixe vazio para não usar limite.</p>
+                <p>Avaliar a base testa cada exemplo contra os outros. Para medir de verdade, faça sinais novos aqui e anote os acertos. Expressão facial não é considerada neste protótipo.</p>
+              </details>
+            </section>
+          </div>
+        </section>
+      </div>
+      <footer class="rodape-traducao">
+        <p class="etapa">Demonstração acadêmica · Protótipo de sinais com movimento (Oi, Tchau, Sim, Não)</p>
+      </footer>
+    </main>
+  </body>
+</html>
